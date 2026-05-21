@@ -11,7 +11,7 @@ app.use(cookieParser());
 
 app.use(
     cors({
-        origin: "https://gen-ai-full-stack-project-32rpgv7gl-rajoshikdas-projects.vercel.app",
+        origin: "https://gen-ai-full-stack-project-rajoshikdas-projects.vercel.app/",
         credentials: true,
     })
 );
