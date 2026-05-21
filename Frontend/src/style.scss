@@ -1,0 +1,21 @@
+@use "./style/button";
+
+*{
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+}
+html, 
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  background-color: rgb(35, 34, 34);
+  color: whitesmoke;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+}

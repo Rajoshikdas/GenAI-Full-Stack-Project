@@ -1,0 +1,960 @@
+@use "sass:color";
+
+// ── Variables ────────────────────────────────────────────────────────────────
+$font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$bg-page:        #0a0e17;
+$bg-card:        rgba(22, 27, 34, 0.65);
+$bg-panel:       rgba(28, 34, 48, 0.55);
+$bg-input:       rgba(30, 37, 53, 0.6);
+$border-color:   rgba(42, 51, 72, 0.7);
+$text-primary:   #e6edf3;
+$text-muted:     #7d8590;
+$accent:         #ff2d78;
+$accent-light:   #ff6b9d;
+$gradient-start: $accent;
+$gradient-end:   $accent-light;
+$font-stack:     $font-primary;
+
+// Severity palette
+$severity-high:   #ff4d4d;
+$severity-medium: #f5a623;
+$severity-low:    #3fb950;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// ── Keyframes ────────────────────────────────────────────────────────────────
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+// ── Scrollbar ────────────────────────────────────────────────────────────────
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba($text-muted, 0.25);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba($text-muted, 0.4);
+  }
+}
+
+// ── Page Shell ───────────────────────────────────────────────────────────────
+.interview-page {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  background: $bg-page;
+  color: $text-primary;
+  font-family: $font-stack;
+  display: flex;
+  align-items: stretch;
+  padding: clamp(0.85rem, 2.2vw, 1.5rem);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  // Background gradient orbs
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::before {
+    width: 500px;
+    height: 500px;
+    background: $gradient-start;
+    top: -150px;
+    left: -100px;
+  }
+
+  &::after {
+    width: 400px;
+    height: 400px;
+    background: $gradient-end;
+    bottom: -100px;
+    right: -100px;
+  }
+}
+
+// ── 3-Column Layout ──────────────────────────────────────────────────────────
+.interview-layout {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - clamp(1.7rem, 4.4vw, 3rem));
+  height: calc(100dvh - clamp(1.7rem, 4.4vw, 3rem));
+  min-height: 0;
+  max-width: 1320px;
+  margin: 0 auto;
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: 1.25rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.5s ease-out;
+  min-width: 0;
+}
+
+.interview-divider {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, $border-color, transparent);
+  flex-shrink: 0;
+}
+
+// ── Left Nav ─────────────────────────────────────────────────────────────────
+.interview-nav {
+  width: clamp(210px, 17vw, 250px);
+  min-height: 0;
+  flex-shrink: 0;
+  padding: clamp(1.1rem, 2vw, 1.75rem) clamp(0.8rem, 1.4vw, 1rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.25rem;
+
+  .nav-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $text-muted;
+    padding: 0 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    background: none;
+    border: none;
+    border-radius: 0.6rem;
+    color: $text-muted;
+    font-family: $font-stack;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+      background-color: $bg-panel;
+      color: $text-primary;
+      transform: translateX(2px);
+    }
+
+    &--active {
+      background: rgba($accent, 0.1);
+      color: $accent;
+      border-left: 2px solid $accent;
+
+      .interview-nav__icon svg {
+        stroke: $accent;
+      }
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  // Download / action button at the bottom
+  .button,
+  .primary-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1rem;
+    background: linear-gradient(135deg, $gradient-start, $gradient-end);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: $font-stack;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 12px rgba($accent, 0.25);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba($accent, 0.35);
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+  }
+}
+
+// ── Center Content ───────────────────────────────────────────────────────────
+.interview-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(1.25rem, 2.4vw, 1.75rem) clamp(1.25rem, 3vw, 2rem);
+  overflow-y: auto;
+  max-height: none;
+  scroll-padding-top: 1.75rem;
+  padding-bottom: 5rem;
+
+  section {
+    min-height: auto;
+    animation: fadeIn 0.4s ease-out;
+  }
+}
+
+.content-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &__count {
+    font-size: 0.78rem;
+    color: $text-muted;
+    background: $bg-panel;
+    padding: 0.2rem 0.65rem;
+    border-radius: 2rem;
+    border: 1px solid $border-color;
+    font-weight: 500;
+  }
+}
+
+// ── Question Cards ───────────────────────────────────────────────────────────
+.q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.q-card {
+  background: $bg-panel;
+  border: 1px solid $border-color;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: color.adjust(#2a3348, $lightness: 8%);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  &__index {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $accent;
+    background: rgba($accent, 0.1);
+    border: 1px solid rgba($accent, 0.2);
+    border-radius: 0.35rem;
+    padding: 0.2rem 0.45rem;
+    margin-top: 2px;
+  }
+
+  &__question {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: $text-primary;
+    line-height: 1.55;
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    color: $text-muted;
+    transition: transform 0.25s ease, color 0.25s ease;
+    margin-top: 2px;
+
+    &--open {
+      transform: rotate(180deg);
+      color: $accent;
+    }
+  }
+
+  &__body {
+    padding: 0 1.15rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    border-top: 1px solid $border-color;
+    padding-top: 0.85rem;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: color.adjust($text-muted, $lightness: 15%);
+      line-height: 1.65;
+    }
+  }
+
+  &__tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.18rem 0.55rem;
+    border-radius: 0.3rem;
+    width: fit-content;
+
+    &--intention {
+      color: #a78bfa;
+      background: rgba(#a78bfa, 0.1);
+      border: 1px solid rgba(#a78bfa, 0.2);
+    }
+
+    &--answer {
+      color: #3fb950;
+      background: rgba(#3fb950, 0.1);
+      border: 1px solid rgba(#3fb950, 0.2);
+    }
+  }
+}
+
+// ── Road Map ─────────────────────────────────────────────────────────────────
+.roadmap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, $accent, rgba($accent, 0.08));
+    border-radius: 1px;
+  }
+}
+
+.roadmap-day {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 0 0.85rem 3.75rem;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 1.1rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: $bg-page;
+    border: 2.5px solid $accent;
+    box-shadow: 0 0 8px rgba($accent, 0.3);
+    transition: box-shadow 0.3s ease;
+  }
+
+  &:hover::before {
+    box-shadow: 0 0 16px rgba($accent, 0.5);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  &__badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $accent;
+    background: rgba($accent, 0.1);
+    border: 1px solid rgba($accent, 0.25);
+    padding: 0.15rem 0.55rem;
+    border-radius: 2rem;
+  }
+
+  &__focus {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__tasks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-size: 0.85rem;
+      color: color.adjust($text-muted, $lightness: 12%);
+      line-height: 1.55;
+    }
+  }
+
+  &__bullet {
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: $accent;
+    margin-top: 8px;
+    opacity: 0.6;
+  }
+}
+
+// ── Right Sidebar ────────────────────────────────────────────────────────────
+.interview-sidebar {
+  width: clamp(235px, 20vw, 280px);
+  min-height: 0;
+  flex-shrink: 0;
+  padding: clamp(1.1rem, 2vw, 1.75rem) clamp(0.9rem, 1.8vw, 1.25rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (hover: none) {
+  .q-card:hover,
+  .skill-tag:hover,
+  .interview-nav__item:hover,
+  .interview-nav .button:hover,
+  .interview-nav .primary-button:hover {
+    transform: none;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .interview-layout {
+    max-width: 1180px;
+  }
+
+  .interview-content {
+    padding-inline: 1.35rem;
+  }
+
+  .q-card__header {
+    padding: 0.9rem 1rem;
+  }
+
+  .q-card__question {
+    font-size: 0.88rem;
+  }
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, $border-color, transparent);
+}
+
+// ── Match Score ──────────────────────────────────────────────────────────────
+.match-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $text-muted;
+  }
+
+  &__ring {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 5px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.15);
+    position: relative;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &.score--high {
+      border-color: $accent;
+      box-shadow: 0 0 24px rgba($accent, 0.2);
+    }
+
+    &.score--mid {
+      border-color: $accent-light;
+      box-shadow: 0 0 24px rgba($accent-light, 0.15);
+    }
+
+    &.score--low {
+      border-color: $text-muted;
+    }
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-primary;
+    line-height: 1;
+  }
+
+  &__pct {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $text-muted;
+    margin-left: 1px;
+  }
+
+  &__sub {
+    font-size: 0.78rem;
+    color: $text-muted;
+    text-align: center;
+    line-height: 1.4;
+  }
+}
+
+// ── Skill Gaps ───────────────────────────────────────────────────────────────
+.skill-gaps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $text-muted;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &--high {
+    background: rgba($severity-high, 0.1);
+    color: $severity-high;
+    border: 1px solid rgba($severity-high, 0.25);
+  }
+
+  &--medium {
+    background: rgba($severity-medium, 0.1);
+    color: $severity-medium;
+    border: 1px solid rgba($severity-medium, 0.25);
+  }
+
+  &--low {
+    background: rgba($severity-low, 0.1);
+    color: $severity-low;
+    border: 1px solid rgba($severity-low, 0.25);
+  }
+}
+
+// ── Loading Screen ───────────────────────────────────────────────────────────
+.loading-screen {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-page;
+
+  h1 {
+    background: linear-gradient(90deg, $accent, $accent-light, $accent);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .interview-page {
+    height: auto;
+    min-height: 100dvh;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .interview-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  .interview-nav {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    gap: 0.5rem;
+    overflow: hidden;
+
+    .nav-content {
+      flex-direction: row;
+      gap: 0.5rem;
+      min-width: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 0.15rem;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__label {
+      display: none;
+    }
+
+    &__item {
+      flex: 0 0 auto;
+      width: auto;
+      white-space: nowrap;
+    }
+
+    .button,
+    .primary-button {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+  }
+
+  .interview-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .interview-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.25rem;
+    overflow: visible;
+
+    .match-score,
+    .skill-gaps {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+
+  .interview-content {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .interview-page {
+    padding: 1rem;
+  }
+
+  .interview-layout {
+    border-radius: 1rem;
+  }
+
+  .interview-content {
+    padding: 1.35rem;
+  }
+
+  .interview-sidebar {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
+    align-items: start;
+  }
+
+  .sidebar-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .interview-page {
+    padding: 0.75rem;
+    min-height: 100dvh;
+  }
+
+  .interview-layout {
+    border-radius: 0.9rem;
+  }
+
+  .interview-nav {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(22, 27, 34, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    .nav-content {
+      width: 100%;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__item {
+      padding: 0.65rem 0.8rem;
+      font-size: 0.82rem;
+    }
+
+    .button,
+    .primary-button {
+      width: 100%;
+      min-height: 44px;
+    }
+  }
+
+  .interview-content {
+    padding: 1.25rem;
+    padding-bottom: 2rem;
+  }
+
+  .content-header {
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    h2 {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+  }
+
+  .q-card {
+    border-radius: 0.65rem;
+
+    &:hover {
+      transform: none;
+    }
+
+    &__header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.65rem;
+      padding: 0.9rem;
+    }
+
+    &__question {
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    &__tag {
+      grid-column: 2 / 3;
+      font-size: 0.62rem;
+    }
+
+    &__chevron {
+      grid-column: 3 / 4;
+      grid-row: 1 / 2;
+    }
+
+    &__body {
+      padding: 0.85rem 0.9rem 0.95rem;
+    }
+  }
+
+  .roadmap-list::before {
+    left: 18px;
+  }
+
+  .roadmap-day {
+    padding-left: 2.75rem;
+
+    &::before {
+      left: 11px;
+    }
+
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  .interview-sidebar {
+    flex-direction: column;
+    padding: 1.25rem;
+
+    .match-score,
+    .skill-gaps {
+      min-width: 0;
+      width: 100%;
+    }
+  }
+
+  .match-score {
+    &__ring {
+      width: 96px;
+      height: 96px;
+    }
+
+    &__value {
+      font-size: 1.7rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .interview-page {
+    padding: 0;
+  }
+
+  .interview-layout {
+    min-height: 100vh;
+    min-height: 100dvh;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .interview-nav {
+    padding: 0.8rem;
+
+    &__item {
+      gap: 0.45rem;
+      padding: 0.62rem 0.72rem;
+      font-size: 0.78rem;
+      min-height: 40px;
+    }
+  }
+
+  .interview-content {
+    padding: 1rem;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .q-card {
+    &__header {
+      grid-template-columns: auto 1fr;
+    }
+
+    &__chevron {
+      grid-column: 2 / 3;
+      justify-self: end;
+    }
+
+    &__tag {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .interview-sidebar {
+    padding: 1rem;
+  }
+
+  .skill-tag {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .loading-screen h1 {
+    font-size: 1.15rem;
+    text-align: center;
+    padding: 0 1rem;
+  }
+}

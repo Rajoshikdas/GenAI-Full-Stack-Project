@@ -1,18 +1,45 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
+const app = express();
 
-const app = express()
-app.use(cookieParser())
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-app.use(express.json())
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
 
-/* require all the routes here */
-const authRouter = require("./routes/auth.routes")
+// ROUTES
+const authRouter = require("./routes/auth.routes");
+const interviewRouter = require("./routes/interview.routes");
 
-/* using all the routes here */
-app.use("/api/auth", authRouter)
+// HEALTH CHECK
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Backend running successfully",
+    });
+});
 
+// ROUTES
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
 
+// GLOBAL ERROR HANDLER
+app.use((err, req, res, next) => {
+    console.error("GLOBAL ERROR:", err);
 
-module.exports = app
+    return res.status(500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+    });
+});
+
+module.exports = app;

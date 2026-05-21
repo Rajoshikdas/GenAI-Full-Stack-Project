@@ -28,6 +28,7 @@ authRouter.post("/login", authController.loginUserController)
  * @access Public
  */
 authRouter.get("/logout", authController.logoutUserController)
+authRouter.post("/logout", authController.logoutUserController)
 
 
 /**
